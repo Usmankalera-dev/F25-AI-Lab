@@ -1,43 +1,33 @@
-"""Lab 3: model-based reflex agent controlling a heater and air-conditioner."""
+# Lab 3: Model-Based Reflex Agent
 
 
 class TemperatureAgent:
-    """Agent with internal state for heater and air-conditioner."""
+    def __init__(self):
+        self.heater = False
+        self.ac = False
 
-    def __init__(self) -> None:
-        self.heater_on = False
-        self.ac_on = False
+    def act(self, temperature):
+        if temperature < 20 and self.heater == False:
+            self.heater = True
+            print(temperature, "C: Heater ON")
+        elif temperature >= 20 and self.heater == True:
+            self.heater = False
+            print(temperature, "C: Heater OFF")
+        else:
+            print(temperature, "C: No heater change")
 
-    def perceive_and_act(self, temperature: int) -> str:
-        """Update internal state and return actions for one temperature reading."""
-        actions = []
-
-        if temperature < 20 and not self.heater_on:
-            self.heater_on = True
-            actions.append("Heater ON")
-        elif temperature >= 20 and self.heater_on:
-            self.heater_on = False
-            actions.append("Heater OFF")
-
-        if temperature > 26 and not self.ac_on:
-            self.ac_on = True
-            actions.append("AC ON")
-        elif temperature <= 26 and self.ac_on:
-            self.ac_on = False
-            actions.append("AC OFF")
-
-        if not actions:
-            actions.append("No change")
-        return f"Temperature: {temperature}°C -> {', '.join(actions)}"
+        if temperature > 26 and self.ac == False:
+            self.ac = True
+            print(temperature, "C: AC ON")
+        elif temperature <= 26 and self.ac == True:
+            self.ac = False
+            print(temperature, "C: AC OFF")
+        else:
+            print(temperature, "C: No AC change")
 
 
-def main() -> None:
-    temperatures = [18, 22, 25, 25, 19]
-    agent = TemperatureAgent()
-    print("Model-based reflex agent trace:")
-    for temperature in temperatures:
-        print(agent.perceive_and_act(temperature))
+temperatures = [18, 22, 25, 25, 19]
+agent = TemperatureAgent()
 
-
-if __name__ == "__main__":
-    main()
+for temperature in temperatures:
+    agent.act(temperature)

@@ -1,20 +1,23 @@
 # F25-AI-Lab
 
+**Name:** Muhammad Usman  
+**Roll No:** 025
+
 Solutions for CAI601400 — Artificial Intelligence Lab.
 
-## Repository structure
+## Folders
 
-- `Lab-1/lab1_conditions_calculator.py` — integer classification and a safe dynamic arithmetic calculator.
-- `Lab-2/lab2_fizzbuzz_movies_oop.py` — FizzBuzz, movie-budget analysis, and Vehicle inheritance.
-- `Lab-3/lab3_model_based_reflex_ac.py` — model-based reflex agent controlling a heater and air-conditioner.
-- `AI_Lab_Explanation.docx` — written explanation of the solutions, design decisions, and expected outputs.
+- `Lab-1` contains the conditions program and dynamic calculator.
+- `Lab-2` contains FizzBuzz, movie budget calculations and the OOP task.
+- `Lab-3` contains the model-based reflex agent with heater and AC.
+- `AI_Lab_Explanation.docx` contains the written explanation.
 
-## Run the programs
+## How to run
+
+Open a terminal in this repository and run:
 
 ```bash
 python3 Lab-1/lab1_conditions_calculator.py
 python3 Lab-2/lab2_fizzbuzz_movies_oop.py
 python3 Lab-3/lab3_model_based_reflex_ac.py
 ```
-
-All programs use only the Python standard library.
