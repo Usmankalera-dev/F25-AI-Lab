@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import heapq
 from dataclasses import dataclass
-from typing import Callable
 
 Graph = dict[str, list[tuple[str, int]]]
 Heuristic = dict[str, int]
@@ -86,15 +85,10 @@ def best_first_search(
     raise ValueError(f"No route from {start} to {goal}")
 
 
-def format_frontier(frontier: list[tuple[str, int, int]]) -> str:
-    return "[" + ", ".join(f"{node}(g={g}, h={f-g}, f={f})" for node, g, f in frontier) + "]"
-
-
 def print_manual_audit(graph: Graph, heuristic: Heuristic) -> None:
     """Print the first three A* expansions and all remaining frontier entries."""
     print("MANUAL HEURISTIC AUDIT (first three expansions)")
     result = best_first_search(graph, heuristic, START, GOAL, "A*")
-    g_values = {START: 0}
     for index, node in enumerate(result.expanded_nodes[:3], start=1):
         if node == START:
             g = 0
@@ -115,7 +109,6 @@ def print_manual_audit(graph: Graph, heuristic: Heuristic) -> None:
         elif node == "C":
             print("  Calculation: f(C) = 3 + 2 = 5; f(G) = 6 + 0 = 6")
             print("  Frontier after expansion: G(g=6,h=0,f=6), B(g=4,h=4,f=8)")
-        g_values[node] = g
     print("  Selection rule: lowest f; ties preserve insertion/successor order.")
 
 
