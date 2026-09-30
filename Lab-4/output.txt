@@ -1,0 +1,57 @@
+Lab 4: Informed Search - A* and UCS
+Graph: {'S': [('A', 1), ('B', 4)], 'A': [('C', 2)], 'B': [('G', 5)], 'C': [('G', 3)], 'G': []}
+Heuristic: {'S': 5, 'A': 4, 'B': 4, 'C': 2, 'G': 0}; start=S; goal=G
+
+MANUAL HEURISTIC AUDIT (first three expansions)
+Expansion 1: S; g=0, h=5, f=5
+  Calculation: f(S) = g(S) + h(S) = 0 + 5 = 5
+  Frontier after expansion: A(g=1,h=4,f=5), B(g=4,h=4,f=8)
+Expansion 2: A; g=1, h=4, f=5
+  Calculation: f(A) = 1 + 4 = 5; f(C) = 3 + 2 = 5
+  Frontier after expansion: C(g=3,h=2,f=5), B(g=4,h=4,f=8)
+Expansion 3: C; g=3, h=2, f=5
+  Calculation: f(C) = 3 + 2 = 5; f(G) = 6 + 0 = 6
+  Frontier after expansion: G(g=6,h=0,f=6), B(g=4,h=4,f=8)
+  Selection rule: lowest f; ties preserve insertion/successor order.
+
+A* RESULT
+Path: S -> A -> C -> G
+Returned cost: 6
+Independently summed path cost: 6
+Processed-node trace: S -> A -> C -> G
+Expanded nodes (goal excluded): S -> A -> C
+Expansion count (goal excluded): 3
+
+UCS RESULT
+Path: S -> A -> C -> G
+Returned cost: 6
+Independently summed path cost: 6
+Processed-node trace: S -> A -> C -> B -> G
+Expanded nodes (goal excluded): S -> A -> C -> B
+Expansion count (goal excluded): 4
+
+Comparison: A* expanded 3 nodes; UCS expanded 4 nodes.
+Both methods return the same optimal path and cost on this graph.
+
+OVERESTIMATE EXPERIMENT
+Original h(C)=2; modified h(C)=10
+True remaining cost from C to G is 3, so h(C)=10 is an overestimate.
+A* RESULT
+Path: S -> B -> G
+Returned cost: 9
+Independently summed path cost: 9
+Processed-node trace: S -> A -> B -> G
+Expanded nodes (goal excluded): S -> A -> B
+Expansion count (goal excluded): 3
+
+The overestimate changes the returned route to a cost-9 route, demonstrating loss of the optimality guarantee.
+EDGE CASE: h(n)=0 for every node
+A* RESULT
+Path: S -> A -> C -> G
+Returned cost: 6
+Independently summed path cost: 6
+Processed-node trace: S -> A -> C -> B -> G
+Expanded nodes (goal excluded): S -> A -> C -> B
+Expansion count (goal excluded): 4
+
+With h(n)=0, A* becomes UCS because f(n)=g(n).
