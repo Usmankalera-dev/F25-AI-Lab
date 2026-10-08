@@ -12,6 +12,7 @@ Solutions for CAI601400 — Artificial Intelligence Lab.
 - `Lab-3` contains the model-based reflex agent with heater and AC.
 - `Lab-4` contains the A* heuristic audit, UCS comparison, and overestimate experiment.
 - `AI_Lab_Explanation.docx` contains the written explanation.
+- Each lab folder includes a simple one-paragraph reflection Word file explaining the main difficulty and how it was solved.
 
 ## How to run
 
