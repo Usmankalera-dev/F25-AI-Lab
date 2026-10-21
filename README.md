@@ -1,18 +1,18 @@
 # F25-AI-Lab
 
-**Name:** Muhammad Usman  
-**Roll No:** 025
+Muhammad Usman - Roll No: 025
+Course: CAI601400 Artificial Intelligence Lab
 
-Solutions for CAI601400 — Artificial Intelligence Lab.
+These are my lab programs for the AI lab course. Every lab folder has the Python file and a short reflection (Word file) which I wrote after finishing that lab.
 
-## Folders
+## Labs
 
-- `Lab-1` contains the conditions program and dynamic calculator.
-- `Lab-2` contains FizzBuzz, movie budget calculations and the OOP task.
-- `Lab-3` contains the model-based reflex agent with heater and AC.
-- `Lab-4` contains the A* heuristic audit, UCS comparison, and overestimate experiment.
-- `AI_Lab_Explanation.docx` contains the written explanation.
-- Each lab folder includes a simple one-paragraph reflection Word file explaining the main difficulty and how it was solved.
+- `Lab-1` - conditions program (negative / zero / one / more) and a dynamic calculator which keeps taking expressions until an empty line is entered.
+- `Lab-2` - FizzBuzz from 1 to 100, a movie budget average task, and a small OOP example with Vehicle, Car and Motorcycle classes.
+- `Lab-3` - model-based reflex agent. The agent (heater + AC) remembers its previous state before taking a decision.
+- `Lab-4` - A* search on a small graph, its comparison with UCS, and an experiment with an overestimated heuristic.
+
+`AI_Lab_Explanation.docx` explains labs 1 to 3 in one file.
 
 ## How to run
 
