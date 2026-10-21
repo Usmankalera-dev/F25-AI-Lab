@@ -1,106 +1,57 @@
-# lab 4 - informed search: A* heuristic audit and UCS comparison
-# name: Muhammad Usman, roll no: 025
-#
-# note about the queue: if two entries have the same f and g, the entry
-# that was added first comes out first. I used a simple counter for this.
-
 import heapq
-from dataclasses import dataclass
 
-Graph = dict[str, list[tuple[str, int]]]
-Heuristic = dict[str, int]
-
-GRAPH: Graph = {
+graph = {
     "S": [("A", 1), ("B", 4)],
     "A": [("C", 2)],
     "B": [("G", 5)],
     "C": [("G", 3)],
     "G": [],
 }
-HEURISTIC: Heuristic = {"S": 5, "A": 4, "B": 4, "C": 2, "G": 0}
-START = "S"
-GOAL = "G"
+heuristic = {"S": 5, "A": 4, "B": 4, "C": 2, "G": 0}
+start = "S"
+goal = "G"
 
 
-# result of one search run is saved in this class
-@dataclass
-class SearchResult:
-    algorithm: str
-    path: list[str]
-    cost: int
-    processed_trace: list[str]
-    expanded_nodes: list[str]
-    frontier_snapshots: list[list[tuple[str, int, int]]]
-
-
-# add the edge weights of a path once again, to cross-check the cost
-# that the search returned
-def path_cost(graph: Graph, path: list[str]) -> int:
+def path_cost(path):
     total = 0
-    for left, right in zip(path, path[1:]):
-        for neighbour, weight in graph[left]:
-            if neighbour == right:
-                total += weight
-                break
-        else:
-            raise ValueError(f"No edge from {left} to {right}")
+    for i in range(len(path) - 1):
+        for nb, w in graph[path[i]]:
+            if nb == path[i + 1]:
+                total = total + w
     return total
 
 
-# the same function runs both A* and UCS. For UCS the heuristic is
-# not used, so the priority of a node is only its g value.
-def best_first_search(
-    graph: Graph,
-    heuristic: Heuristic,
-    start: str,
-    goal: str,
-    algorithm: str,
-) -> SearchResult:
+def search(use_h, h):
     counter = 0
     best_g = {start: 0}
-    queue: list[tuple[int, int, int, str, list[str]]] = [
-        (heuristic[start] if algorithm == "A*" else 0, 0, counter, start, [start])
-    ]
-    processed: list[str] = []
-    expanded: list[str] = []
-    snapshots: list[list[tuple[str, int, int]]] = []
-
+    first_f = h[start] if use_h else 0
+    queue = [(first_f, 0, counter, start, [start])]
+    processed = []
+    expanded = []
     while queue:
         f, g, _, node, path = heapq.heappop(queue)
         processed.append(node)
         if g != best_g.get(node):
-            continue  # old entry - a better g for this node was already found
+            continue
         if node == goal:
-            return SearchResult(algorithm, path, g, processed, expanded, snapshots)
-
+            return path, g, processed, expanded, best_g
         expanded.append(node)
-        for neighbour, weight in graph[node]:
-            new_g = g + weight
-            if new_g < best_g.get(neighbour, float("inf")):
-                best_g[neighbour] = new_g
-                counter += 1
-                new_f = new_g + (heuristic[neighbour] if algorithm == "A*" else 0)
-                heapq.heappush(queue, (new_f, new_g, counter, neighbour, path + [neighbour]))
-        snapshots.append(sorted((n, item_g, item_f) for item_f, item_g, _, n, _ in queue))
-
-    raise ValueError(f"No route from {start} to {goal}")
+        for nb, w in graph[node]:
+            new_g = g + w
+            if new_g < best_g.get(nb, float("inf")):
+                best_g[nb] = new_g
+                counter = counter + 1
+                new_f = new_g + (h[nb] if use_h else 0)
+                heapq.heappush(queue, (new_f, new_g, counter, nb, path + [nb]))
 
 
-# prints the first three expansions the way I checked them by hand
-def print_manual_audit(graph: Graph, heuristic: Heuristic) -> None:
+def print_audit():
     print("MANUAL HEURISTIC AUDIT (first three expansions)")
-    result = best_first_search(graph, heuristic, START, GOAL, "A*")
-    for index, node in enumerate(result.expanded_nodes[:3], start=1):
-        if node == START:
-            g = 0
-        elif node == "A":
-            g = 1
-        elif node == "C":
-            g = 3
-        else:
-            g = next((g for n, g, _ in result.frontier_snapshots[index - 1] if n == node), 0)
+    path, cost, processed, expanded, best_g = search(True, heuristic)
+    for i, node in enumerate(expanded[:3], start=1):
+        g = best_g[node]
         h = heuristic[node]
-        print(f"Expansion {index}: {node}; g={g}, h={h}, f={g + h}")
+        print(f"Expansion {i}: {node}; g={g}, h={h}, f={g + h}")
         if node == "S":
             print("  Calculation: f(S) = g(S) + h(S) = 0 + 5 = 5")
             print("  Frontier after expansion: A(g=1,h=4,f=5), B(g=4,h=4,f=8)")
@@ -113,46 +64,46 @@ def print_manual_audit(graph: Graph, heuristic: Heuristic) -> None:
     print("  Selection rule: lowest f; ties preserve insertion/successor order.")
 
 
-def print_result(result: SearchResult, graph: Graph) -> None:
-    print(f"{result.algorithm} RESULT")
-    print(f"Path: {' -> '.join(result.path)}")
-    print(f"Returned cost: {result.cost}")
-    print(f"Independently summed path cost: {path_cost(graph, result.path)}")
-    print(f"Processed-node trace: {' -> '.join(result.processed_trace)}")
-    print(f"Expanded nodes (goal excluded): {' -> '.join(result.expanded_nodes)}")
-    print(f"Expansion count (goal excluded): {len(result.expanded_nodes)}")
+def print_result(name, result):
+    path, cost, processed, expanded, best_g = result
+    print(name + " RESULT")
+    print("Path: " + " -> ".join(path))
+    print(f"Returned cost: {cost}")
+    print(f"Independently summed path cost: {path_cost(path)}")
+    print("Processed-node trace: " + " -> ".join(processed))
+    print("Expanded nodes (goal excluded): " + " -> ".join(expanded))
+    print(f"Expansion count (goal excluded): {len(expanded)}")
     print()
 
 
-def main() -> None:
+def main():
     print("Lab 4: Informed Search - A* and UCS")
-    print(f"Graph: {GRAPH}")
-    print(f"Heuristic: {HEURISTIC}; start={START}; goal={GOAL}\n")
-    print_manual_audit(GRAPH, HEURISTIC)
+    print(f"Graph: {graph}")
+    print(f"Heuristic: {heuristic}; start={start}; goal={goal}\n")
+    print_audit()
     print()
 
-    astar = best_first_search(GRAPH, HEURISTIC, START, GOAL, "A*")
-    ucs = best_first_search(GRAPH, HEURISTIC, START, GOAL, "UCS")
-    print_result(astar, GRAPH)
-    print_result(ucs, GRAPH)
-    print(f"Comparison: A* expanded {len(astar.expanded_nodes)} nodes; UCS expanded {len(ucs.expanded_nodes)} nodes.")
+    astar = search(True, heuristic)
+    ucs = search(False, heuristic)
+    print_result("A*", astar)
+    print_result("UCS", ucs)
+    print(f"Comparison: A* expanded {len(astar[3])} nodes; UCS expanded {len(ucs[3])} nodes.")
     print("Both methods return the same optimal path and cost on this graph.\n")
 
-    modified = dict(HEURISTIC)
+    modified = dict(heuristic)
     modified["C"] = 10
-    overestimated = best_first_search(GRAPH, modified, START, GOAL, "A*")
+    over = search(True, modified)
     print("OVERESTIMATE EXPERIMENT")
-    print(f"Original h(C)={HEURISTIC['C']}; modified h(C)={modified['C']}")
+    print(f"Original h(C)={heuristic['C']}; modified h(C)={modified['C']}")
     print("True remaining cost from C to G is 3, so h(C)=10 is an overestimate.")
-    print_result(overestimated, GRAPH)
+    print_result("A*", over)
     print("The overestimate changes the returned route to a cost-9 route, demonstrating loss of the optimality guarantee.")
 
     print("EDGE CASE: h(n)=0 for every node")
-    zero_h = {node: 0 for node in GRAPH}
-    zero_result = best_first_search(GRAPH, zero_h, START, GOAL, "A*")
-    print_result(zero_result, GRAPH)
+    zero_h = {node: 0 for node in graph}
+    zero = search(True, zero_h)
+    print_result("A*", zero)
     print("With h(n)=0, A* becomes UCS because f(n)=g(n).")
 
 
-if __name__ == "__main__":
-    main()
+main()
