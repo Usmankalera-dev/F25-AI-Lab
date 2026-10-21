@@ -1,5 +1,4 @@
-# Lab 1: Conditions and Dynamic Calculator
-
+# lab 1 - conditions + dynamic calculator
 
 def check_number(number):
     if number < 0:
@@ -14,6 +13,7 @@ def check_number(number):
 
 
 def calculator():
+    # the calculator keeps running until the user just presses enter
     print("\nDynamic Calculator")
     print("Enter an expression such as 1 + 2 * 3")
     print("Press Enter without typing anything to stop.")
@@ -29,6 +29,7 @@ def calculator():
             print("Please enter a correct arithmetic expression.")
 
 
+# main part - first the number check, then the calculator
 try:
     number = int(input("Please enter an integer: "))
     check_number(number)
