@@ -1,5 +1,6 @@
-# Lab 3: Model-Based Reflex Agent
-
+# lab 3 - model based reflex agent (heater + ac)
+# the agent remembers in its memory if the heater and ac are on or off,
+# it does not decide only from the current temperature
 
 class TemperatureAgent:
     def __init__(self):
@@ -7,19 +8,21 @@ class TemperatureAgent:
         self.ac = False
 
     def act(self, temperature):
-        if temperature < 20 and self.heater == False:
+        # heater part
+        if temperature < 20 and not self.heater:
             self.heater = True
             print(temperature, "C: Heater ON")
-        elif temperature >= 20 and self.heater == True:
+        elif temperature >= 20 and self.heater:
             self.heater = False
             print(temperature, "C: Heater OFF")
         else:
             print(temperature, "C: No heater change")
 
-        if temperature > 26 and self.ac == False:
+        # ac part
+        if temperature > 26 and not self.ac:
             self.ac = True
             print(temperature, "C: AC ON")
-        elif temperature <= 26 and self.ac == True:
+        elif temperature <= 26 and self.ac:
             self.ac = False
             print(temperature, "C: AC OFF")
         else:
