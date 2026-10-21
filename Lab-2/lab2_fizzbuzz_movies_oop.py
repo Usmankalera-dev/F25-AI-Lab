@@ -1,5 +1,4 @@
-# Lab 2: FizzBuzz, Movie Budgets and OOP
-
+# lab 2 - fizzbuzz, movie budgets and a small oop example
 
 print("FizzBuzz")
 for number in range(1, 101):
@@ -13,6 +12,7 @@ for number in range(1, 101):
         print(number)
 
 
+# movies list - (name, budget in millions)
 movies = [
     ("Inception", 160),
     ("Avatar", 237),
@@ -23,7 +23,7 @@ movies = [
 
 total = 0
 for title, budget in movies:
-    total = total + budget
+    total += budget
 
 average = total / len(movies)
 print("\nAverage movie budget:", round(average, 2), "million")
@@ -33,11 +33,12 @@ for title, budget in movies:
     if budget > average:
         difference = budget - average
         print(title, "is above average by", round(difference, 2), "million")
-        count = count + 1
+        count += 1
 
 print("Number of movies above average:", count)
 
 
+# oop part - Vehicle is the parent class, Car and Motorcycle are its children
 class Vehicle:
     def start_engine(self):
         print("The vehicle engine has started.")
