@@ -1,10 +1,8 @@
-"""Lab 4: Informed Search - A* heuristic audit and UCS comparison.
-
-The implementation uses a stable insertion-order tie break after f and g,
-so equal-priority entries are processed in successor/insertion order.
-"""
-
-from __future__ import annotations
+# lab 4 - informed search: A* heuristic audit and UCS comparison
+# name: Muhammad Usman, roll no: 025
+#
+# note about the queue: if two entries have the same f and g, the entry
+# that was added first comes out first. I used a simple counter for this.
 
 import heapq
 from dataclasses import dataclass
@@ -24,6 +22,7 @@ START = "S"
 GOAL = "G"
 
 
+# result of one search run is saved in this class
 @dataclass
 class SearchResult:
     algorithm: str
@@ -34,8 +33,9 @@ class SearchResult:
     frontier_snapshots: list[list[tuple[str, int, int]]]
 
 
+# add the edge weights of a path once again, to cross-check the cost
+# that the search returned
 def path_cost(graph: Graph, path: list[str]) -> int:
-    """Independently sum the edge weights in a returned path."""
     total = 0
     for left, right in zip(path, path[1:]):
         for neighbour, weight in graph[left]:
@@ -47,6 +47,8 @@ def path_cost(graph: Graph, path: list[str]) -> int:
     return total
 
 
+# the same function runs both A* and UCS. For UCS the heuristic is
+# not used, so the priority of a node is only its g value.
 def best_first_search(
     graph: Graph,
     heuristic: Heuristic,
@@ -54,7 +56,6 @@ def best_first_search(
     goal: str,
     algorithm: str,
 ) -> SearchResult:
-    """Run A* or UCS with stale-entry protection and stable queue ordering."""
     counter = 0
     best_g = {start: 0}
     queue: list[tuple[int, int, int, str, list[str]]] = [
@@ -68,7 +69,7 @@ def best_first_search(
         f, g, _, node, path = heapq.heappop(queue)
         processed.append(node)
         if g != best_g.get(node):
-            continue  # stale entry after a better route was discovered
+            continue  # old entry - a better g for this node was already found
         if node == goal:
             return SearchResult(algorithm, path, g, processed, expanded, snapshots)
 
@@ -85,8 +86,8 @@ def best_first_search(
     raise ValueError(f"No route from {start} to {goal}")
 
 
+# prints the first three expansions the way I checked them by hand
 def print_manual_audit(graph: Graph, heuristic: Heuristic) -> None:
-    """Print the first three A* expansions and all remaining frontier entries."""
     print("MANUAL HEURISTIC AUDIT (first three expansions)")
     result = best_first_search(graph, heuristic, START, GOAL, "A*")
     for index, node in enumerate(result.expanded_nodes[:3], start=1):
